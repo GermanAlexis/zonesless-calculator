@@ -1,0 +1,7 @@
+button {
+  @apply  bg-indigo-700 bg-opacity-10;
+}
+
+.isCommand {
+  @apply  bg-indigo-700 bg-opacity-10;
+}
