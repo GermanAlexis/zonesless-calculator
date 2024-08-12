@@ -5,3 +5,7 @@ button {
 .isCommand {
   @apply  bg-indigo-700 bg-opacity-10;
 }
+
+.isDoubleSize {
+  @apply w-2/4;
+}
