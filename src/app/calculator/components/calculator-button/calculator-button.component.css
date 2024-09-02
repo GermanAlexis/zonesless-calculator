@@ -9,3 +9,8 @@ button {
 .isDoubleSize {
   @apply w-2/4;
 }
+
+
+.isPressed {
+  @apply  bg-indigo-800 bg-opacity-10;
+}
