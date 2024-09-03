@@ -29,14 +29,14 @@ export class CalculatorComponent {
   public lastOperator = computed(() => this.calculatorService.lastOperator());
 
   handleContent(event: string) {
-    console.log({ event });
+    console.log('event: ', event);
     this.calculatorService.calculatorValidations(event);
   }
 
   handleKeyBoardEvent(event: KeyboardEvent) {
     const keyEquivalent: Record<string, string> = {
       Enter: '=',
-      Backspace: 'C',
+      C: 'C',
       '%': '/',
       x: '*',
     };
