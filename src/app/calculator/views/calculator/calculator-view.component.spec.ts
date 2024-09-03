@@ -1,6 +1,5 @@
+import { CalculatorComponent } from '@/calculator/components/calculator/calculator.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CalculatorComponent } from './calculator-view.component';
 
 describe('CalculatorComponent', () => {
   let component: CalculatorComponent;
@@ -8,9 +7,8 @@ describe('CalculatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CalculatorComponent]
-    })
-    .compileComponents();
+      imports: [CalculatorComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CalculatorComponent);
     component = fixture.componentInstance;

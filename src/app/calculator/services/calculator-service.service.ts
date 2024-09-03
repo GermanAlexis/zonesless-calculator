@@ -13,71 +13,171 @@ export class CalculatorService {
   private specialOperators = ['=', 'C', '+/-', 'Backspace', '.'];
 
   async calculatorValidations(value: string) {
-    if (
-      ![
-        ...this.numbersValid,
-        ...this.operatorsValid,
-        ...this.specialOperators,
-      ].includes(value)
-    )
-      return;
+    if (!this.isValidInput(value)) return;
 
-    if (value === '=') {
-      // TODO Result Operator
+    if (this.isEqualsSign(value)) {
+      this.generateCalculator();
       return;
     }
 
-    if (value === 'C') {
+    if (this.isClearCommand(value)) {
+      this.clearCalculator();
+      return;
+    }
+
+    if (this.isBackspaceCommand(value)) {
+      this.handleBackspace();
+      return;
+    }
+
+    if (this.isOperator(value)) {
+      this.handleOperator(value);
+    }
+
+    if (this.isDecimalPoint(value)) {
+      this.handleDecimalPoint();
+    }
+
+    if (this.isZeroInput(value)) return;
+
+    if (this.isSignToggle(value)) {
+      this.toggleSign();
+    }
+
+    if (this.isNumericInput(value)) {
+      this.handleNumericInput(value);
+    }
+  }
+
+  private isValidInput(value: string): boolean {
+    return [
+      ...this.numbersValid,
+      ...this.operatorsValid,
+      ...this.specialOperators,
+    ].includes(value);
+  }
+
+  private isEqualsSign(value: string): boolean {
+    return value === '=';
+  }
+
+  private isClearCommand(value: string): boolean {
+    return value === 'C';
+  }
+
+  private clearCalculator() {
+    this.resultText.set('0');
+    this.subResultText.set('0');
+    this.lastOperator.set('+');
+  }
+
+  private isBackspaceCommand(value: string): boolean {
+    return value === 'Backspace';
+  }
+
+  private handleBackspace() {
+    if (this.resultText() === '0') return;
+    if (this.resultText().length === 1) {
       this.resultText.set('0');
-      this.subResultText.set('0');
-      this.lastOperator.set('+');
       return;
     }
+    this.resultText.update((pre) => pre.slice(0, -1));
+  }
 
-    if (value === 'Backspace') {
-      console.log('value: ', value);
-      if (this.resultText() === '0') return;
-      if (this.resultText().length === 1) {
-        this.resultText.set('0');
-        return;
-      }
+  private isOperator(value: string): boolean {
+    return this.operatorsValid.includes(value);
+  }
 
-      this.resultText.update((pre) => pre.slice(0, -1));
-    }
+  private handleOperator(value: string) {
+    this.generateCalculator();
+    this.lastOperator.set(value);
+    this.subResultText.set(this.resultText());
+    this.resultText.set('0');
+  }
 
-    if (this.operatorsValid.includes(value)) {
-      this.lastOperator.set(value);
-      this.subResultText.set(this.resultText());
-      this.resultText.set('0');
-    }
+  private isDecimalPoint(value: string): boolean {
+    return value === '.' && !this.resultText().includes('.');
+  }
 
-    if (value === '.' && !this.resultText().includes('.')) {
-      if (this.resultText() === '0' || this.resultText() === '') {
-        this.resultText.update((pre) => pre + '.');
-        return;
-      }
-      this.resultText.update((pre) => pre + '.');
-    }
+  private handleDecimalPoint() {
+    this.resultText.update((pre) => pre + '.');
+  }
 
-    if (value === '0' && this.resultText() === '0') return;
+  private isZeroInput(value: string): boolean {
+    return value === '0' && this.resultText() === '0';
+  }
 
-    if (value === '+/-') {
-      if (this.resultText().includes('-')) {
-        this.resultText.update((pre) => pre.slice(1));
-      }
+  private isSignToggle(value: string): boolean {
+    return value === '+/-';
+  }
+
+  private toggleSign() {
+    if (this.resultText().includes('-')) {
+      this.resultText.update((pre) => pre.slice(1));
+    } else {
       this.resultText.update((pre) => `-${pre}`);
     }
+  }
 
-    if (this.numbersValid.includes(value)) {
-      if (this.resultText() === '0') {
-        this.resultText.set(value);
-      }
+  private isNumericInput(value: string): boolean {
+    return this.numbersValid.includes(value);
+  }
 
-      if (this.resultText() === '-0') {
-        this.resultText.set('-' + value);
-      }
-
+  private handleNumericInput(value: string) {
+    if (this.resultText() === '0') {
+      this.resultText.set(value);
+    } else if (this.resultText() === '-0') {
+      this.resultText.set('-' + value);
+    } else {
       this.resultText.update((pre) => pre + value);
+    }
+  }
+
+  generateCalculator() {
+    let number1 = parseFloat(this.resultText());
+    let number2 = parseFloat(this.subResultText());
+    let lastOperator = this.lastOperator();
+
+    const resultDivisor = this.calculateDivisor(number1, number2);
+
+    const total = this.calculateResult(
+      number1,
+      number2,
+      lastOperator,
+      resultDivisor
+    );
+
+    this.resultText.set(total.toString());
+    this.subResultText.set('0');
+  }
+
+  private calculateDivisor(number1: number, number2: number): number {
+    if (number1 > number2) {
+      return number1 / number2;
+    } else if (number1 === number2) {
+      return 0;
+    } else {
+      return NaN;
+    }
+  }
+
+  private calculateResult(
+    number1: number,
+    number2: number,
+    operator: string,
+    divisor: number
+  ): number {
+    switch (operator) {
+      case '+':
+        return number1 + number2;
+      case '-':
+        return number1 - number2;
+      case '*':
+        return number1 * number2;
+      case '/':
+        return divisor;
+      default:
+        return 0;
     }
   }
 }
