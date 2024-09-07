@@ -4,11 +4,11 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class CalculatorService {
-  resultText = signal('10');
+  resultText = signal('0');
   subResultText = signal('0');
   lastOperator = signal('+');
 
-  private numbersValid = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  private numbersValid = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
   private operatorsValid = ['%', '/', '*', '+', '-'];
   private specialOperators = ['=', 'C', '+/-', 'Backspace', '.'];
 
@@ -137,8 +137,9 @@ export class CalculatorService {
     let number1 = parseFloat(this.resultText());
     let number2 = parseFloat(this.subResultText());
     let lastOperator = this.lastOperator();
-
-    const resultDivisor = this.calculateDivisor(number1, number2);
+    let resultDivisor: number = 0;
+    if (lastOperator === '/' && number2 > 0)
+      resultDivisor = this.calculateDivisor(number1, number2);
 
     const total = this.calculateResult(
       number1,
@@ -152,8 +153,8 @@ export class CalculatorService {
   }
 
   private calculateDivisor(number1: number, number2: number): number {
-    if (number1 > number2) {
-      return number1 / number2;
+    if (number1 < number2) {
+      return number2 / number1;
     } else if (number1 === number2) {
       return 0;
     } else {
