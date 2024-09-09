@@ -57,6 +57,16 @@ describe('CalculatorButtonComponent', () => {
     expect(component.isDoubleSize()).toBeTrue();
   });
 
+  it('should have initial css w-2/4 and is isCommand true ', () => {
+    fixture.componentRef.setInput('isCommand', true);
+    fixture.detectChanges();
+
+    const cssElements = compiled.querySelector('button');
+    const elementAdded = cssElements?.classList.value;
+    expect(elementAdded).toContain('isCommand');
+    expect(component.isCommand()).toBeTrue();
+  });
+
   it('should listen event handleClick when is pressed keyboard ', () => {
     spyOn(component.onClickOut, 'emit');
     component.contentValue()!.nativeElement.innerText = '1';
