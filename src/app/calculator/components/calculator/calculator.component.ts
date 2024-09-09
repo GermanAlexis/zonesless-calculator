@@ -29,7 +29,6 @@ export class CalculatorComponent {
   public lastOperator = computed(() => this.calculatorService.lastOperator());
 
   handleContent(event: string) {
-    console.log('event: ', event);
     this.calculatorService.calculatorValidations(event);
   }
 
